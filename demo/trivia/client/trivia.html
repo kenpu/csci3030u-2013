@@ -1,0 +1,137 @@
+<head>
+  <title>trivia</title>
+</head>
+
+<body>
+ {{> page}}
+</body>
+
+<template name="page">
+  {{#if showCreateDialog}}
+    {{> createDialog}}
+  {{/if}}
+  {{#if showQuestionDialog}}
+    {{> questionDialog}}
+  {{/if}}
+  <div style="float:right">
+    {{loginButtons align="right"}}
+  </div>
+    {{> content}}
+</template>
+
+<template name="content">
+  {{#if currentUser}}
+  <p class="greatings"> Hello {{currentUser.username}}</p>
+  <a href="#" class="btn btn-mini add">Add question</a>
+  {{#if hasQuestions}}
+  <p class="numberOfQuestions"> You have {{questions}} questions to 
+  <a href="#" class="btn btn-mini question">Answer</a>.</p>
+  {{else}}
+  <p class="numberOfQuestions"> You have no questions to answer... yet! ;)</p>
+  {{/if}}
+
+  {{else}}
+  <p class="greatings"> Hello, please log in to start playing. </p>
+  {{/if}}
+  {{> userlist}}
+</template>
+
+<template name="userlist">
+  {{#if users}}
+  <p class="userlisthead"> Registered users:</p>
+    <table class="userlisttable" border="1">
+      <tr>
+        <th>
+          username
+        </th>
+        <th>
+          Questions published
+        </th>
+        <th>
+          Total questions answered
+        </th>
+        <th>
+          Questions corrected answered
+        </th>
+      </tr>
+      {{#each users}}
+        {{> user}}
+      {{/each}}
+    </table>  
+   {{else}}
+     No users registered yet.
+   {{/if}}
+</template>
+
+<template name="user">
+  <tr>
+    <td>
+      {{username}}
+    </td>
+    <td>
+      {{questions}}
+    </td>
+    <td>
+     {{answered}}
+    </td>
+    <td>
+      {{correct}}
+    </td>
+  </tr> 
+</template>
+
+<template name="createDialog">
+  <div class="mask"></div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3> Add trivia question </h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+        
+      <label>Enter the question</label>
+      <textarea name="question" class="questionTextArea"></textarea>
+      <label>Enter the answers and select the correct one</label>
+      <input type="radio" name="correctAnswer" value=1><input name="answer1" type="text" class="answerTextField answer1"> </input></input>
+      <input type="radio" name="correctAnswer" value=2><input name="answer2" type="text" class="answerTextField answer2"> </input></input>
+      <input type="radio" name="correctAnswer" value=3><input name="answer3" type="text" class="answerTextField answer3"> </input></input>
+      <input type="radio" name="correctAnswer" value=4><input name="answer4" type="text" class="answerTextField answer4"> </input></input>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Add question</a>
+    </div>
+  </div>
+</template>
+
+<template name="questionDialog">
+  <div class="mask"></div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3> Question </h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <p class="question"> {{randomQuestion.question}}</p>
+      <label> Your answer:</label>
+      <p><input type="radio" name="answer" value=1> {{randomQuestion.answer1}}</input></p>
+      <p><input type="radio" name="answer" value=2> {{randomQuestion.answer2}}</input></p>
+      <p><input type="radio" name="answer" value=3> {{randomQuestion.answer3}}</input></p>
+      <p><input type="radio" name="answer" value=4> {{randomQuestion.answer4}}</input></p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary answer">Answer</a>
+    </div>
+  </div>
+</template>

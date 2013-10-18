@@ -1,0 +1,3 @@
+- Sort users according to their number of answers and correct answers.
+- Display users plot instead of a table (Maybe using jqplot).
+- Prettify the site using CSS.
