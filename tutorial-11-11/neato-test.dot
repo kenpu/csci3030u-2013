@@ -1,0 +1,9 @@
+graph G {
+    ken [color=yellow, fontcolor="red"];
+    ken -- mark;
+    mark -- jeremy;
+    jeremy -- faisal;
+    faisal -- chris;
+    mark -- chris;
+    chris -- ken;
+}
