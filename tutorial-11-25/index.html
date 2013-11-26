@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="bootstrap.css">
+        <script src="jquery.min.js"></script>
+        <script src="sprintf.js"></script>
+        <style>
+            #sql {
+                width: 100%;
+                height: 400px;
+                font-size: 14px;
+                font-family: "Courier New";
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1> SQL Rocks </h1>
+            <div id="message">Loading JSON...</div>
+            <div class="row">
+                <div class="col-md-6">
+                    <textarea id="sql"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <div id="result"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function loadDatabase(data, success) {
+                var db = openDatabase(
+                    "uoit", '1.0', "tutorial", 10 * 1024 * 1024);
+                db.transaction(function(tx) {
+                    tx.executeSql(
+                        "create table courses(code text, title text)", // SQL
+                        [], // no parameters
+                        function() {populateCourses(tx, data)},
+                        function() {populateCourses(tx, data)});
+                }, null, function() {
+                    $("#message").text("Data inserted");
+                });
+            }
+
+            function populateCourses(tx, data) {
+                data.courses.forEach(function(row) {
+                    tx.executeSql("insert into courses values(?,?)", row);
+                });
+            };
+
+            function runSQL(query) {
+                window.locked = true;
+                var db = openDatabase(
+                    "uoit", '1.0', "tutorial", 10 * 1024 * 1024);
+                db.transaction(function(tx) {
+                    tx.executeSql(query, [],
+                        function(transaction, results) {
+                            window.locked = false;
+                            $("#message").text("Query okay.");
+                            $("#result").empty();
+                            var table = $("<table>")
+                                .addClass("table table-striped")
+                                .appendTo("#result");
+
+                            for(var i=0; i < results.rows.length; i++) {
+                                var row = results.rows.item(i);
+                                var tr = $('<tr>').appendTo(table);
+                                for(var col in row) {
+                                    var val = row[col];
+                                    var td = $('<td>').text(val).appendTo(tr);
+                                }
+                            }
+                        },
+                        function(transaction, error) {
+                            window.locked = false;
+                            $("#message").text(error.message);
+                        });
+                });
+            }
+
+            $.getJSON("uoit.json", function(data) {
+                $("#message").text("JSON loaded.");
+                window.data = data;
+                loadDatabase(data);
+            });
+
+            $("#sql").on('keyup', function(e) {
+                if(window.locked) {
+                    return;
+                } else {
+                    runSQL($("#sql").val());
+                }
+            });
+        </script>
+    </body>
+</html>
